@@ -1,0 +1,27 @@
+{
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
+  "gmail": {
+    "name": "Reddit for Mail",
+    "logoUrl": "https://www.reddit.com/favicon.ico",
+    "contextualTriggers": [{
+      "unconditional": {
+      },
+      "onTriggerFunction": "buildAddOn"
+    }],
+    "openLinkUrlPrefixes": [
+      "https://i.redd.it/",
+      "https://i.imgur.com/",
+      "https://reddit.com/"
+    ],
+    "universalActions": [{
+        "text": "Choose Subreddit",
+        "runFunction": "chooseSubreddit"
+      }],
+    "primaryColor": "#FF4500",
+    "secondaryColor": "#4285F4"
+  }
+}
+
