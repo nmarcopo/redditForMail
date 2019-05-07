@@ -1,8 +1,8 @@
 # Reddit for Mail
 
-## A GMail Add-on
+## A Gmail Add-on
 
-This is a little GMail add on for browsing Reddit in the sidebar of your mailbox.
+This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox. Since the posts are loaded through Gmail, it bypasses any filters your network might have for Reddit.
 
 ## Progress
 
