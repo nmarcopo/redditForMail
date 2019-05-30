@@ -14,3 +14,4 @@ This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox
 - [ ] Browse comments
 - [ ] Change subreddits without needing to reload
 - [ ] Add "force reload" to empty cache
+- [ ] Prepare add-on for [submission to GSuite Marketplace](https://developers.google.com/gsuite/add-ons/how-tos/publishing-gmail-addons)
