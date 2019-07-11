@@ -171,9 +171,6 @@ function chooseSubreddit(){
   
   // Create card with the textInput and the submitButton
   var card = CardService.newCardBuilder()
-  .setHeader(CardService.newCardHeader()
-             .setTitle("Select a new Subreddit")
-             .setSubtitle("Or, press back."))
   .addSection(CardService.newCardSection()
               .addWidget(textInput))
   .addSection(CardService.newCardSection()
