@@ -2,7 +2,13 @@
 
 ## A Gmail Add-on
 
-This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox. Since the posts are loaded through Gmail, it bypasses any filters your network might have for Reddit.
+This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox. Since the posts are loaded through Gmail, it bypasses any filters your network might have for Reddit. It also comes with a nice mobile Gmail add on once you've added it to your desktop Gmail!
+
+## Screenshots
+
+|Posts View|Details View|Comments View|Mobile View
+|--|--|--|--|
+|![Post View Screenshot](/img/posts.png?raw=true "Post View Screenshot")|![Details View Screenshot](/img/details.png?raw=true "Details View Screenshot")|![Comments View Screenshot](/img/comments.png?raw=true "Comments View Screenshot")|![Mobile View Screenshot](/img/mobile.jpg?raw=true "Mobile View Screenshot")|
 
 ## Progress
 
