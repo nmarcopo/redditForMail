@@ -57,8 +57,8 @@ function buildAddOn() {
     // Set comments button
     var commentsAction = CardService.newAction()
     .setFunctionName("openCommentsAction")
-    .setParameters({url: "https://reddit.com" + post.permalink + ".json?sort=confidence"})
-    var commentsSection = CardService.newTextButton().setText("View Comments").setOnClickAction(commentsAction)
+    .setParameters({url: "https://reddit.com" + post.permalink + ".json?sort=confidence"});
+    var commentsSection = CardService.newTextButton().setText("View Comments").setOnClickAction(commentsAction);
     
     // Set score formatting
     var scoreNumber = post.score;
@@ -101,35 +101,37 @@ function buildAddOn() {
 */
 function openCommentsAction(params){
   // Grab comments from the post, don't bother caching because data is too big
-  var comments = loadComments(params.parameters.url)
+  var comments = loadComments(params.parameters.url);
   
   // Create a card containing comments  
-  var card = CardService.newCardBuilder()
+  var card = CardService.newCardBuilder();
   
   for(var i = 0; i < comments.length; i++){
-    var comment = comments[i].data
+    var comment = comments[i].data;
     
     // Round score off to a multiple of 1000 if greater than 999
     var scoreNumber = comment.score;
     if(scoreNumber > 999){
       scoreNumber = Math.floor(scoreNumber / 1000) + "K points";
+    }else{
+      scoreNumber += " points";
     }
     if(comment.score_hidden == true){
-      scoreNumber = "Score Hidden"
+      scoreNumber = "Score Hidden";
     }
     
     var widget = CardService.newKeyValue()
     .setMultiline(true)
     .setTopLabel("u/" + comment.author + " - " + scoreNumber)
-    .setContent("" + comment.body) // Required to "cast" the body to a string for whatever reason
-    card.addSection(CardService.newCardSection().addWidget(widget))
+    .setContent("" + comment.body); // Required to "cast" the body to a string for whatever reason
+    card.addSection(CardService.newCardSection().addWidget(widget));
   }
   
   // Push the card to the display
-  var nav = CardService.newNavigation().pushCard(card.build())
+  var nav = CardService.newNavigation().pushCard(card.build());
   return CardService.newActionResponseBuilder()
   .setNavigation(nav)
-  .build()
+  .build();
 }
 
 /**
@@ -138,13 +140,13 @@ function openCommentsAction(params){
 * @return {JSON Object}: object of comments for the post
 */
 function loadComments(url){
-  var response = UrlFetchApp.fetch(url)
+  var response = UrlFetchApp.fetch(url);
   if(response.getResponseCode() !== 200){
     // Do something for non-200 response
   }
-  var jsonData = JSON.parse(response.getContentText())
-  var comments = jsonData[1].data.children
-  return comments
+  var jsonData = JSON.parse(response.getContentText());
+  var comments = jsonData[1].data.children;
+  return comments;
 }
 
 /**
