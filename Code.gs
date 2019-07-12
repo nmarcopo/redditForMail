@@ -54,6 +54,12 @@ function buildAddOn() {
     .setParameters({url: "https://reddit.com" + post.permalink})
     var sourceSection = CardService.newTextButton().setText("View source on Reddit").setOnClickOpenLinkAction(sourceAction)
     
+    // Set comments button
+    var commentsAction = CardService.newAction()
+    .setFunctionName("openCommentsAction")
+    .setParameters({url: "https://reddit.com" + post.permalink + ".json?sort=confidence"})
+    var commentsSection = CardService.newTextButton().setText("View Comments").setOnClickAction(commentsAction)
+    
     // Set score formatting
     var scoreNumber = post.score;
     if(scoreNumber > 999){
@@ -76,6 +82,7 @@ function buildAddOn() {
     .addSection(CardService.newCardSection().addWidget(sourceSection))
     .addSection(CardService.newCardSection().addWidget(titleSection))
     .addSection(CardService.newCardSection().addWidget(imageSection))
+    .addSection(CardService.newCardSection().addWidget(commentsSection))
     .addSection(CardService.newCardSection().addWidget(selftextSection))
     .build();
     
@@ -85,6 +92,59 @@ function buildAddOn() {
   
   // Return and display the cards to the user
   return sections;
+}
+
+/**
+* This function allows the add on to push a comments card to the display.
+* 
+* @return {Action}: 
+*/
+function openCommentsAction(params){
+  // Grab comments from the post, don't bother caching because data is too big
+  var comments = loadComments(params.parameters.url)
+  
+  // Create a card containing comments  
+  var card = CardService.newCardBuilder()
+  
+  for(var i = 0; i < comments.length; i++){
+    var comment = comments[i].data
+    
+    // Round score off to a multiple of 1000 if greater than 999
+    var scoreNumber = comment.score;
+    if(scoreNumber > 999){
+      scoreNumber = Math.floor(scoreNumber / 1000) + "K points";
+    }
+    if(comment.score_hidden == true){
+      scoreNumber = "Score Hidden"
+    }
+    
+    var widget = CardService.newKeyValue()
+    .setMultiline(true)
+    .setTopLabel("u/" + comment.author + " - " + scoreNumber)
+    .setContent("" + comment.body) // Required to "cast" the body to a string for whatever reason
+    card.addSection(CardService.newCardSection().addWidget(widget))
+  }
+  
+  // Push the card to the display
+  var nav = CardService.newNavigation().pushCard(card.build())
+  return CardService.newActionResponseBuilder()
+  .setNavigation(nav)
+  .build()
+}
+
+/**
+* This function loads the comments of a specified Reddit post.
+*
+* @return {JSON Object}: object of comments for the post
+*/
+function loadComments(url){
+  var response = UrlFetchApp.fetch(url)
+  if(response.getResponseCode() !== 200){
+    // Do something for non-200 response
+  }
+  var jsonData = JSON.parse(response.getContentText())
+  var comments = jsonData[1].data.children
+  return comments
 }
 
 /**
@@ -120,6 +180,9 @@ function loadRedditData(){
     subreddit = "/r/popular";
   }
   var response = UrlFetchApp.fetch("https://www.reddit.com" + subreddit + ".json");
+  if(response.getResponseCode() !== 200){
+    // Error handling for non-200 status code
+  }
   var jsonData = JSON.parse(response.getContentText());
   var redditArray = jsonData.data.children;
   
