@@ -14,7 +14,8 @@
     "openLinkUrlPrefixes": [
       "https://i.redd.it/",
       "https://i.imgur.com/",
-      "https://reddit.com/"
+      "https://reddit.com/",
+      "*"
     ],
     "universalActions": [{
         "text": "Choose Subreddit",

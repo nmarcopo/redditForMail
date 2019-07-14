@@ -25,8 +25,11 @@ function buildAddOn() {
     .setTopLabel("Post Body:")
     .setMultiline(true);
     if(post.selftext !== ""){
+      // Convert Markdown formatting to HTML formatting
+      body = parseMarkdown(post.selftext)
+      
       selftextSection
-      .setContent(post.selftext)
+      .setContent(body)
     }else{
       selftextSection
       .setContent("No body.");
@@ -107,6 +110,11 @@ function openCommentsAction(params){
   var card = CardService.newCardBuilder();
   
   for(var i = 0; i < comments.length; i++){
+    // Make sure we only parse comments
+    if(comments[i].kind !== "t1"){
+      continue;
+    }
+    
     var comment = comments[i].data;
     
     // Round score off to a multiple of 1000 if greater than 999
@@ -120,10 +128,14 @@ function openCommentsAction(params){
       scoreNumber = "Score Hidden";
     }
     
+    // Convert Markdown formatting to HTML formatting
+    body = parseMarkdown("" + comment.body) // Required to "cast" the body to a string for whatever reason
+    
     var widget = CardService.newKeyValue()
     .setMultiline(true)
     .setTopLabel("u/" + comment.author + " - " + scoreNumber)
-    .setContent("" + comment.body); // Required to "cast" the body to a string for whatever reason
+    .setContent(body);
+    
     card.addSection(CardService.newCardSection().addWidget(widget));
   }
   
@@ -159,6 +171,21 @@ function openURLAction(params){
   .setOpenLink(CardService.newOpenLink()
                .setUrl(params.parameters.url))
   .build();
+}
+
+/**
+* This function will parse Reddit markdown into Gmail add-on valid HTML.
+*
+* @return {string}: the parsed markdown
+*/
+function parseMarkdown(markdown){
+  return markdown
+  .replace(/\[(.*)\]\((.*)\)/g, "<a href=$2>$1</a>")
+  .replace(/^&gt;(.*)$/gm, "<font color=#0080ff>$1</font>")
+  .replace(/~~(.*)~~.*$/gm, "<s>$1</s>")
+  .replace(/\*\*(.*)\*\*.*$/gm, "<b>$1</b>") // need to replace bold before italics because same * character
+  .replace(/\*(.*)\*.*$/gm, "<i>$1</i>")
+  .replace(/^#+(.*)$/gm, "<b>$1</b>"); // just make all headers bold
 }
 
 /**
