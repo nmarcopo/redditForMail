@@ -19,9 +19,9 @@ This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox
 - [x] Change subreddits
 - [x] Browse comments
   - Can only browse top-level comments, maybe there's a way to visualize lower comments?
+- [x] Format text so that Markdown is parsed properly
 - [ ] Sort comments
 - [ ] Option to change color scheme
-- [ ] Format text so that Markdown is parsed properly
 - [ ] Add "force reload" to empty cache
 - [ ] Change subreddits without needing to reload
 - [ ] Prepare add-on for [submission to GSuite Marketplace](https://developers.google.com/gsuite/add-ons/how-tos/publishing-gmail-addons)
