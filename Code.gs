@@ -180,11 +180,11 @@ function openURLAction(params){
 */
 function parseMarkdown(markdown){
   return markdown
-  .replace(/\[(.*)\]\((.*)\)/g, "<a href=$2>$1</a>")
-  .replace(/^&gt;(.*)$/gm, "<font color=#0080ff>$1</font>")
-  .replace(/~~(.*)~~.*$/gm, "<s>$1</s>")
-  .replace(/\*\*(.*)\*\*.*$/gm, "<b>$1</b>") // need to replace bold before italics because same * character
-  .replace(/\*(.*)\*.*$/gm, "<i>$1</i>")
+  .replace(/\[(.*)\]\((.*)\)/g, "<a href=$2>$1</a>") // link
+  .replace(/^&gt;(.*)$/gm, "<font color=#5980a6>$1</font>") // quote
+  .replace(/~~([^*\n\r]+)~~/gm, "<s>$1</s>") // strikethrough
+  .replace(/\*\*([^*\n\r]+)\*\*/gm, "<b>$1</b>") // need to replace bold before italics because same * character
+  .replace(/\*([^*\n\r]+)\*/gm, "<i>$1</i>") // italics
   .replace(/^#+(.*)$/gm, "<b>$1</b>"); // just make all headers bold
 }
 
