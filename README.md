@@ -23,5 +23,6 @@ This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox
 - [ ] Sort comments
 - [ ] Option to change color scheme
 - [ ] Add "force reload" to empty cache
+- [ ] Allow upvoting, downvoting, commenting
 - [ ] Change subreddits without needing to reload
 - [ ] Prepare add-on for [submission to GSuite Marketplace](https://developers.google.com/gsuite/add-ons/how-tos/publishing-gmail-addons)
