@@ -60,7 +60,7 @@ function buildAddOn() {
     // Set comments button
     var commentsAction = CardService.newAction()
     .setFunctionName("openCommentsAction")
-    .setParameters({url: "https://reddit.com" + post.permalink + ".json?sort=confidence"});
+    .setParameters({url: "https://reddit.com" + post.permalink + ".json?"});
     var commentsSection = CardService.newTextButton().setText("View Comments").setOnClickAction(commentsAction);
     
     // Set score formatting
@@ -100,14 +100,43 @@ function buildAddOn() {
 /**
 * This function allows the add on to push a comments card to the display.
 * 
-* @return {Action}: 
+* @return {Action}: Action that pushes a comments card to the display
 */
-function openCommentsAction(params){
+function openCommentsAction(params, changeSort){
+  // Check current sorting of comments
+  var userProperties = PropertiesService.getUserProperties();
+  if(userProperties.getProperty("sort") === null){
+    userProperties.setProperty("sort", "confidence");
+  }
+  var sort = userProperties.getProperty("sort");
+  
   // Grab comments from the post, don't bother caching because data is too big
-  var comments = loadComments(params.parameters.url);
+  var comments = loadComments(params.parameters.url + "sort=" + sort);
   
   // Create a card containing comments  
   var card = CardService.newCardBuilder();
+  
+  // Create a dropdown for sorting comments
+  var dropdown = CardService.newSelectionInput()
+    .setType(CardService.SelectionInputType.DROPDOWN)
+    .setTitle("Sort comments by...")
+    .setFieldName("comments_sorting")
+    .addItem("Best", "confidence", sort === "confidence")
+    .addItem("Top", "top", sort === "top")
+    .addItem("New", "new", sort === "new")
+    .addItem("Controversial", "controversial", sort === "controversial")
+    .addItem("Old", "old", sort === "old")
+    .addItem("Q&A", "qa", sort === "qa")
+    .setOnChangeAction(CardService.newAction()
+        .setFunctionName("changeCommentSort")
+                       .setParameters({url: params.parameters.url}));
+  
+  // Add a note that the comments may take a bit to refresh
+  var refreshNote = "<font color=#919191>You may need to wait a moment for the comments to refresh.</font>"
+  
+  card.addSection(CardService.newCardSection()
+                  .addWidget(dropdown)
+                 .addWidget(CardService.newTextParagraph().setText(refreshNote)))
   
   for(var i = 0; i < comments.length; i++){
     // Make sure we only parse comments
@@ -139,8 +168,34 @@ function openCommentsAction(params){
     card.addSection(CardService.newCardSection().addWidget(widget));
   }
   
+  // If the changeSort function called, just return the card so we can push it
+  if(changeSort){
+    return card.build();
+  }
+  
   // Push the card to the display
   var nav = CardService.newNavigation().pushCard(card.build());
+  return CardService.newActionResponseBuilder()
+  .setNavigation(nav)
+  .build();
+}
+
+/**
+* This function changes the sort order of the comments.
+* 
+* @return {Action}: Action to pop the current comment card and push the new sorted card
+*/
+function changeCommentSort(params){
+  var sort = params.formInput.comments_sorting;
+  var userProperties = PropertiesService.getUserProperties().setProperty("sort", sort);
+  
+  // Simulate passing the params dict as if func is an actionResponse
+  var commentsParams = {parameters: {url: params.parameters.url}};
+  
+  var commentsCard = openCommentsAction(commentsParams, true)
+  
+  var nav = CardService.newNavigation().popCard().pushCard(commentsCard);
+  
   return CardService.newActionResponseBuilder()
   .setNavigation(nav)
   .build();
@@ -180,12 +235,13 @@ function openURLAction(params){
 */
 function parseMarkdown(markdown){
   return markdown
-  .replace(/\[(.*)\]\((.+\..+)\)/g, "<a href=$2>$1</a>") // link
+  .replace(/\[(.*)\]\(([^\)]+\.[^\)]+)\)/g, "<a href=$2>$1</a>") // link
   .replace(/^&gt;(.*)$/gm, "<font color=#5980a6>$1</font>") // quote
   .replace(/~~([^*\n\r]+)~~/gm, "<s>$1</s>") // strikethrough
   .replace(/\*\*([^*\n\r]+)\*\*/gm, "<b>$1</b>") // need to replace bold before italics because same * character
   .replace(/\*([^*\n\r]+)\*/gm, "<i>$1</i>") // italics
-  .replace(/^#+(.*)$/gm, "<b>$1</b>"); // just make all headers bold
+  .replace(/^#+(.*)$/gm, "<b>$1</b>") // just make all headers bold
+  .replace(/&amp;#x200B;/gm, " "); // get rid of all blank space characters
 }
 
 /**
@@ -284,7 +340,7 @@ function chooseSubreddit(){
 *                   or unsuccessful subreddit change
 */
 function subredditChange(e){
-  var scriptProperties = PropertiesService.getUserProperties();
+  var userProperties = PropertiesService.getUserProperties();
   
   // Get the user-submitted new subreddit
   var subredditChoice = e.formInput.subredditChoice;
@@ -340,7 +396,7 @@ function subredditChange(e){
   var nav;
   if(subredditValid === true){
     // If the subreddit is valid, set the 'subreddit' property and replace the root card with a message to reload the add on
-    scriptProperties.setProperty("subreddit",subredditChoice);
+    userProperties.setProperty("subreddit",subredditChoice);
     nav = CardService.newNavigation().popToRoot().updateCard(replacementCard);
     CacheService.getUserCache().remove("redditData");
     return CardService.newActionResponseBuilder()

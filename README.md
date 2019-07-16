@@ -20,7 +20,7 @@ This is a little Gmail add on for browsing Reddit in the sidebar of your mailbox
 - [x] Browse comments
   - Can only browse top-level comments, maybe there's a way to visualize lower comments?
 - [x] Format text so that Markdown is parsed properly
-- [ ] Sort comments
+- [x] Sort comments
 - [ ] Option to change color scheme
 - [ ] Add "force reload" to empty cache
 - [ ] Allow upvoting, downvoting, commenting
