@@ -180,7 +180,7 @@ function openURLAction(params){
 */
 function parseMarkdown(markdown){
   return markdown
-  .replace(/\[(.*)\]\((.*)\)/g, "<a href=$2>$1</a>") // link
+  .replace(/\[(.*)\]\((.+\..+)\)/g, "<a href=$2>$1</a>") // link
   .replace(/^&gt;(.*)$/gm, "<font color=#5980a6>$1</font>") // quote
   .replace(/~~([^*\n\r]+)~~/gm, "<s>$1</s>") // strikethrough
   .replace(/\*\*([^*\n\r]+)\*\*/gm, "<b>$1</b>") // need to replace bold before italics because same * character
